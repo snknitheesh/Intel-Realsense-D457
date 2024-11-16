@@ -1,7 +1,7 @@
 # jetson_realsense
 Here are my personal codes which a can help u 
 
-teied to do my own experiment with geting a frame rate of the cam recored @ test.py
+tried to do my own experiment with geting a frame rate of the cam recored @ test.py
 
 1_meter_depth_filter.py
 this program filters all object in .9 to 1.1 meters 
