@@ -18,18 +18,7 @@ print("[INFO] Starting playback from bag file...")
 pipeline.start(config)
 
 def segment_planes(depth_image, distance_threshold=0.05, min_plane_size=1000):
-    """
-    Segments planar surfaces in a depth image using RANSAC.
-    
-    Args:
-        depth_image (np.ndarray): The input depth image (in meters).
-        distance_threshold (float): The maximum distance a point can be from a plane to be included.
-        min_plane_size (int): The minimum number of points to consider a plane valid.
 
-    Returns:
-        planes (list): A list of planar surfaces as masks.
-        depths (list): The average depths of the detected planes.
-    """
     height, width = depth_image.shape
     points = []
     

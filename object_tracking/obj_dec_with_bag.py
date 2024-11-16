@@ -4,14 +4,14 @@ import cv2
 import tensorflow as tf
 
 # Path to the .bag file
-bag_file_path = "20241112_223036.bag"
+foxop = "20241112_223036.bag"
 
 # Configure depth and color streams
 pipeline = rs.pipeline()
 config = rs.config()
 
 # Configure the pipeline to stream from the bag file
-config.enable_device_from_file(bag_file_path)
+config.enable_device_from_file(foxop)  #bag_file_path
 
 # Enable color stream
 config.enable_stream(rs.stream.color, 1280, 720, rs.format.bgr8, 30)
@@ -20,11 +20,10 @@ print("[INFO] Starting playback from bag file...")
 pipeline.start(config)
 print("[INFO] Bag file loaded and ready.")
 
-# Load TensorFlow model
+
 print("[INFO] Loading TensorFlow model...")
 PATH_TO_CKPT = "frozen_inference_graph.pb"
 
-# Load the TensorFlow model into memory
 detection_graph = tf.Graph()
 with detection_graph.as_default():
     od_graph_def = tf.compat.v1.GraphDef()
@@ -34,9 +33,9 @@ with detection_graph.as_default():
         tf.compat.v1.import_graph_def(od_graph_def, name='')
     sess = tf.compat.v1.Session(graph=detection_graph)
 
-# Input tensor is the image
+# Input 
 image_tensor = detection_graph.get_tensor_by_name('image_tensor:0')
-# Output tensors
+# Output
 detection_boxes = detection_graph.get_tensor_by_name('detection_boxes:0')
 detection_scores = detection_graph.get_tensor_by_name('detection_scores:0')
 detection_classes = detection_graph.get_tensor_by_name('detection_classes:0')
@@ -47,7 +46,7 @@ colors_hash = {}
 
 try:
     while True:
-        # Wait for frames
+
         frames = pipeline.wait_for_frames()
         color_frame = frames.get_color_frame()
 
