@@ -73,7 +73,7 @@ try:
         frames = pipeline.wait_for_frames()
         # color_frame = frames.get_color_frame()
         depth_frame = frames.get_depth_frame()
-
+        
         if not depth_frame:
             print("[INFO] End of bag file reached.")
             break
@@ -82,21 +82,22 @@ try:
         # color_image = np.asanyarray(color_frame.get_data())
         depth_image = np.asanyarray(depth_frame.get_data())
         depth_image = depth_image * depth_frame.get_units()  # Convert to meters
-
-        # Detect planar surfaces
-        planes, depths = segment_planes(depth_image)
-
-        # Display planes on the color image
-        for idx, plane in enumerate(planes):
-            mask = cv2.cvtColor(plane, cv2.COLOR_GRAY2BGR)
-            # color_image = cv2.addWeighted(color_image, 0.8, mask, 0.2, 0)
-            depth_image = cv2.addWeighted(depth_image, 0.8, mask, 0.2, 0)
-            cv2.putText(depth_image, f"Plane {idx + 1}: {depths[idx]:.2f}m", 
-                        (10, 30 + idx * 30), cv2.FONT_HERSHEY_SIMPLEX, 
-                        1, (0, 255, 0), 2)
-
-        # Show the output
+        # cv2.namedWindow("Depth Stream - Yellow to Red Filter", cv2.WINDOW_AUTOSIZE)
         cv2.imshow("Planes", depth_image)
+
+        # # Detect planar surfaces
+        # planes, depths = segment_planes(depth_image)
+
+        # # Display planes on the color image
+        # for idx, plane in enumerate(planes):
+        #     mask = cv2.cvtColor(plane, cv2.COLOR_GRAY2BGR)
+        #     # color_image = cv2.addWeighted(color_image, 0.8, mask, 0.2, 0)
+        #     depth_image = cv2.addWeighted(depth_image, 0.8, mask, 0.2, 0)
+        #     cv2.putText(depth_image, f"Plane {idx + 1}: {depths[idx]:.2f}m", 
+        #                 (10, 30 + idx * 30), cv2.FONT_HERSHEY_SIMPLEX, 
+        #                 1, (0, 255, 0), 2)
+        
+
 
         if cv2.waitKey(1) == 27:  # Press 'ESC' to exit
             break
