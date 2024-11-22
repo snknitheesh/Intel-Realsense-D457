@@ -60,7 +60,6 @@ def segment_planes(depth_image, intrinsics, distance_threshold=0.05, min_plane_s
         planes.append(plane_mask)
         depths.append(avg_depth)
 
-        # Exclude inliers from further fitting
         points = points[~inliers]
 
     return planes, depths
