@@ -37,13 +37,10 @@ def segment_planes(depth_image, intrinsics, distance_threshold=0.05, min_plane_s
     depths = []
 
     while len(points) > min_plane_size:
-        # RANSAC plane fitting
         model = RANSACRegressor(residual_threshold=distance_threshold)
-        X = points[:, :2]  # (x, y)
-        z = points[:, 2]   # z (depth)
+        X = points[:, :2]
+        z = points[:, 2]
         model.fit(X, z)
-
-        # Identify inliers
         inliers = model.inlier_mask_
         if inliers.sum() < min_plane_size:
             break
@@ -66,38 +63,29 @@ def segment_planes(depth_image, intrinsics, distance_threshold=0.05, min_plane_s
 
 try:
     while True:
-        # Get frames
         frames = pipeline.wait_for_frames()
         depth_frame = frames.get_depth_frame()
 
         if not depth_frame:
             print("[INFO] End of bag file reached.")
             break
-
-        # Convert depth image to numpy array
         depth_image = np.asanyarray(depth_frame.get_data())
-        depth_image = depth_image * depth_frame.get_units()  # Convert to meters
+        depth_image = depth_image * depth_frame.get_units()
 
-        # Retrieve camera intrinsics
         profile = pipeline.get_active_profile()
         depth_stream = profile.get_stream(rs.stream.depth)
         intrinsics = depth_stream.as_video_stream_profile().get_intrinsics()
 
-        # Detect planar surfaces
         planes, depths = segment_planes(depth_image, intrinsics)
 
-        # Create a visualization for the depth image
         depth_colormap = cv2.applyColorMap(cv2.convertScaleAbs(depth_image, alpha=0.03), cv2.COLORMAP_JET)
 
-        # Overlay planes onto the depth colormap
         for idx, plane in enumerate(planes):
             mask = cv2.cvtColor(plane, cv2.COLOR_GRAY2BGR)
             depth_colormap = cv2.addWeighted(depth_colormap, 0.8, mask, 0.2, 0)
             cv2.putText(depth_colormap, f"Plane {idx + 1}: {depths[idx]:.2f}m", 
                         (10, 30 + idx * 30), cv2.FONT_HERSHEY_SIMPLEX, 
                         1, (0, 255, 0), 2)
-
-        # Show the output
         cv2.imshow("Planes", depth_colormap)
 
         if cv2.waitKey(1) == 27:  # Press 'ESC' to exit
