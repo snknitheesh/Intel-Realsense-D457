@@ -4,7 +4,7 @@ import cv2
 import os
 
 # Default bag file path
-bag_file = "foxTest.bag"
+bag_file = "test.bag"
 
 # Check if the bag file exists in the current directory
 if not os.path.exists(bag_file):

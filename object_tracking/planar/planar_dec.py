@@ -3,7 +3,7 @@ import numpy as np
 import cv2
 
 # Path to the .bag file
-bag_file_path = "20241112_223036.bag"
+bag_file_path = "test.bag"
 
 # Configure RealSense pipeline
 pipeline = rs.pipeline()
@@ -11,9 +11,9 @@ config = rs.config()
 
 # Configure to read from the bag file
 config.enable_device_from_file(bag_file_path)
-config.enable_stream(rs.stream.color, 1280, 720, rs.format.bgr8, 30)
-config.enable_stream(rs.stream.depth, 1280, 720, rs.format.z16, 30)
-
+# config.enable_stream(rs.stream.color, 1280, 720, rs.format.bgr8, 30)
+# config.enable_stream(rs.stream.depth, 1280, 720, rs.format.z16, 30)
+config.enable_stream(rs.stream.depth, rs.format.z16, 30)
 print("[INFO] Starting playback from bag file...")
 pipeline.start(config)
 
@@ -71,15 +71,15 @@ try:
     while True:
         # Get frames
         frames = pipeline.wait_for_frames()
-        color_frame = frames.get_color_frame()
+        # color_frame = frames.get_color_frame()
         depth_frame = frames.get_depth_frame()
 
-        if not color_frame or not depth_frame:
+        if not depth_frame:
             print("[INFO] End of bag file reached.")
             break
 
         # Convert images to numpy arrays
-        color_image = np.asanyarray(color_frame.get_data())
+        # color_image = np.asanyarray(color_frame.get_data())
         depth_image = np.asanyarray(depth_frame.get_data())
         depth_image = depth_image * depth_frame.get_units()  # Convert to meters
 
@@ -89,13 +89,14 @@ try:
         # Display planes on the color image
         for idx, plane in enumerate(planes):
             mask = cv2.cvtColor(plane, cv2.COLOR_GRAY2BGR)
-            color_image = cv2.addWeighted(color_image, 0.8, mask, 0.2, 0)
-            cv2.putText(color_image, f"Plane {idx + 1}: {depths[idx]:.2f}m", 
+            # color_image = cv2.addWeighted(color_image, 0.8, mask, 0.2, 0)
+            depth_image = cv2.addWeighted(depth_image, 0.8, mask, 0.2, 0)
+            cv2.putText(depth_image, f"Plane {idx + 1}: {depths[idx]:.2f}m", 
                         (10, 30 + idx * 30), cv2.FONT_HERSHEY_SIMPLEX, 
                         1, (0, 255, 0), 2)
 
         # Show the output
-        cv2.imshow("Planes", color_image)
+        cv2.imshow("Planes", depth_image)
 
         if cv2.waitKey(1) == 27:  # Press 'ESC' to exit
             break
