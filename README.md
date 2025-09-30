@@ -1,5 +1,7 @@
 # jetson_realsense
-Here are my personal codes which a can help u 
+Here are my personal codes which a can help you
+
+
 
 tried to do my own experiment with geting a frame rate of the cam recored @ test.py
 
